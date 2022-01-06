@@ -1,4 +1,4 @@
-import { Arg, Field, InputType, Mutation, ObjectType, Query, Resolver } from "type-graphql";
+import { Arg, Args, Field, InputType, Mutation, ObjectType, Query, Resolver } from "type-graphql";
 import argon2 from "argon2"
 import User from "../entities/User";
 
@@ -55,16 +55,18 @@ export default class UserResolver{
     async createUser(
         @Arg("args") args : UsernamePasswordInput
     ) : Promise<UserResponse> {
-
+        
+        // Check username and password length
         if (args.username.length < 3){
             return {errors: [{field: "Username", message: "Username must be at least 3 characters long."}]}
-        }
-
-        if (args.password.length < 3){
+        } else if (args.password.length < 3){
             return {errors: [{field: "Password", message: "Password must be at least 3 characters long."}]}
         }
 
+        // Only stored hashed password
         const hashedPassword = await argon2.hash(args.password)
+
+        // Try creating a new user, fail if username is already taken
         try{
             const theUser = await User.create({username: args.username, password: hashedPassword}).save()
             return { user: theUser };
@@ -74,6 +76,20 @@ export default class UserResolver{
             if(err.code == "23505") return {errors:[{field: "Username", message:"Username already taken."}]}
             else return{errors:[{field:"Unknown", message:"Something went wrong..."}]}
         }        
+    }
+
+    @Mutation(() => UserResponse)
+    async userLogin(
+        @Arg("args") args : UsernamePasswordInput
+    ) : Promise<UserResponse>{
+        // Check if the username exists
+        const theUser = await User.findOne({where:{username:args.username}})
+        if(!theUser) return {errors:[{field:"Username", message:"Username not found."}]}
+        
+        // Validate password
+        const passwordIsValid = await argon2.verify(theUser.password, args.password)
+        if(!passwordIsValid) return {errors:[{field:"Password", message:"password is not valid."}]}
+        return {user:theUser}
     }
     
 }
