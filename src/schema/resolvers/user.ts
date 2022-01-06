@@ -1,4 +1,4 @@
-import { Arg, Args, Field, InputType, Mutation, ObjectType, Query, Resolver } from "type-graphql";
+import { Arg, Field, InputType, Mutation, ObjectType, Query, Resolver } from "type-graphql";
 import argon2 from "argon2"
 import User from "../entities/User";
 
