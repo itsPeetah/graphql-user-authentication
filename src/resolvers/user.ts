@@ -1,6 +1,7 @@
-import { Arg, Field, InputType, Mutation, ObjectType, Query, Resolver } from "type-graphql";
+import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver } from "type-graphql";
 import argon2 from "argon2"
 import User from "../entities/User";
+import { MyGraphQLContext } from "src/types";
 
 @InputType()
 class UsernamePasswordInput{
@@ -80,7 +81,8 @@ export default class UserResolver{
 
     @Mutation(() => UserResponse)
     async login(
-        @Arg("args") args : UsernamePasswordInput
+        @Arg("args") args : UsernamePasswordInput,
+        @Ctx() {req} : MyGraphQLContext
     ) : Promise<UserResponse>{
         // Check if the username exists
         const theUser = await User.findOne({where:{username:args.username}})
@@ -89,6 +91,22 @@ export default class UserResolver{
         // Validate password
         const passwordIsValid = await argon2.verify(theUser.password, args.password)
         if(!passwordIsValid) return {errors:[{field:"Password", message:"password is not valid."}]}
+
+        req.session.userId = theUser._id
+
+        return {user:theUser}
+    }
+
+    @Query(() => UserResponse)
+    async me(
+        @Ctx() {req} : MyGraphQLContext
+    ) : Promise<UserResponse>{
+
+        if (!req.session.userId){
+            return {errors:[{field:"Not logged in", message:"Not logged in"}]}
+        }
+        
+        const theUser = await User.findOne({_id: req.session.userId})
         return {user:theUser}
     }
     

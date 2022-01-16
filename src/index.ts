@@ -25,8 +25,8 @@ const main =async () => {
     const app = express()
 
     const RedisStore = connectRedis(session)
-    const redisClient = createClient(/*blank here for localhost*/)  // import createClient instead of using redis.createClient()
-
+    const redisClient = createClient()
+    
     // Applying express middleware in a specific order.
     // Session will run before everything else.
     app.use(
