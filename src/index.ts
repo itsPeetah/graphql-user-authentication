@@ -1,9 +1,11 @@
 import express from "express"
 import {createConnection} from "typeorm"
-import {graphqlHTTP} from "express-graphql"
 import {buildSchema} from "type-graphql"
 import User from "./schema/entities/User"
 import UserResolver from "./schema/resolvers/user"
+
+import {ApolloServer} from "apollo-server-express"
+
 // import redis from "redis"
 // import session from "express-session"
 // import connectRedis from "connect-redis"
@@ -22,6 +24,13 @@ const main =async () => {
     console.log("DB Connection:", orm.name)
 
     const app = express()
+
+    const apolloServer = new ApolloServer({
+        schema: await buildSchema({
+            resolvers: [UserResolver],
+            validate:false
+        })
+    })
     
     /*
     const RedisStore = connectRedis(session)
@@ -48,17 +57,9 @@ const main =async () => {
     )
     */
 
-    app.get("/", (_, res) => {
-        res.send("I'm alive!")
-    })
-    app.use("/graphql", graphqlHTTP({
-        graphiql:true,
-        schema: await buildSchema({
-            resolvers: [UserResolver],
-            validate:false
-        }),
-        context:{ foo: "bar" }
-    }))
+    app.get("/", (_, res) => { res.send("Hello world! I'm alive!") })
+
+    apolloServer.applyMiddleware({ app })
 
     app.listen(5000., () => console.log("Express server started @ localhost:5000."))
 }

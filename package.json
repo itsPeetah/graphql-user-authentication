@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/itsPeetah/graphql-user-signup#readme",
   "dependencies": {
+    "apollo-server-express": "^2.16.1",
     "argon2": "^0.28.3",
     "connect-redis": "^6.0.0",
     "express": "^4.17.2",
