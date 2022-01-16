@@ -97,17 +97,15 @@ export default class UserResolver{
         return {user:theUser}
     }
 
-    @Query(() => UserResponse)
-    async me(
-        @Ctx() {req} : MyGraphQLContext
-    ) : Promise<UserResponse>{
+    @Query(() => User, {nullable:true})
+    async me( @Ctx() {req} : MyGraphQLContext ) : Promise<User|null|undefined> {
 
         if (!req.session.userId){
-            return {errors:[{field:"Not logged in", message:"Not logged in"}]}
+            return null;
         }
         
         const theUser = await User.findOne({_id: req.session.userId})
-        return {user:theUser}
+        return theUser // return theUser! if I'm sure it's going to be defined
     }
     
 }
