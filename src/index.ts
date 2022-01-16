@@ -23,6 +23,7 @@ const main =async () => {
 
     const app = express()
     
+    /*
     const RedisStore = connectRedis(session)
     const redisClient = redis.createClient()
 
@@ -45,6 +46,7 @@ const main =async () => {
             resave:false,
         })
     )
+    */
 
     app.get("/", (_, res) => {
         res.send("I'm alive!")
