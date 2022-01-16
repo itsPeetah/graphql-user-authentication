@@ -35,7 +35,7 @@ class UserResponse{
 export default class UserResolver{
     
     @Query(() => UserResponse, {nullable:true})
-    async findUser(
+    async getUser(
         @Arg("username", () => String) username : string
     ) : Promise<UserResponse>{
         const theUser = await User.findOne({where:{username}})
@@ -46,7 +46,7 @@ export default class UserResolver{
     }
 
     @Query(() => [User])
-    async findAllUsers() : Promise<User[]>{
+    async allUsers() : Promise<User[]>{
         const users = User.find()
         return users;
     }
