@@ -3,12 +3,11 @@ import {createConnection} from "typeorm"
 import {buildSchema} from "type-graphql"
 import User from "./schema/entities/User"
 import UserResolver from "./schema/resolvers/user"
-
 import {ApolloServer} from "apollo-server-express"
-
-// import redis from "redis"
-// import session from "express-session"
-// import connectRedis from "connect-redis"
+import { createClient } from "redis"
+import session from "express-session"
+import connectRedis from "connect-redis"
+import { MyGraphQLContext } from "./types"
 
 const main =async () => {
 
@@ -25,42 +24,39 @@ const main =async () => {
 
     const app = express()
 
-    const apolloServer = new ApolloServer({
-        schema: await buildSchema({
-            resolvers: [UserResolver],
-            validate:false
-        })
-    })
-    
-    /*
     const RedisStore = connectRedis(session)
-    const redisClient = redis.createClient()
+    const redisClient = createClient(/*blank here for localhost*/)  // import createClient instead of using redis.createClient()
 
     // Applying express middleware in a specific order.
     // Session will run before everything else.
     app.use(
         session({
             name:"qid",
-            store: new RedisStore({
-                client:redisClient,
-                disableTouch:true,
-            }),
+            store: new RedisStore({ client:redisClient, disableTouch:true }),
             cookie:{
                 maxAge : 1000 * 60 * 60 * 24 * 365 * 10, // 10 years
-                httpOnly: true,
                 sameSite: "lax", // csrf
+                httpOnly: true, // no access from browser js
                 secure: false, // cookie only works in https -> set true in production
             },
             secret:"kadfgkasfkasdofkapkdpofkkadfgkasfkasdofkapkdpofk",
             resave:false,
+            saveUninitialized:false,
         })
     )
-    */
 
-    app.get("/", (_, res) => { res.send("Hello world! I'm alive!") })
-
+    const apolloServer = new ApolloServer({
+        schema: await buildSchema({
+            resolvers: [UserResolver],
+            validate:false
+        }),
+        context: ({req, res}) : MyGraphQLContext => ({req, res})
+    })
+    
+    
     apolloServer.applyMiddleware({ app })
-
+    
+    app.get("/", (_, res) => { res.send("Hello world! I'm alive!") })
     app.listen(5000., () => console.log("Express server started @ localhost:5000."))
 }
 
