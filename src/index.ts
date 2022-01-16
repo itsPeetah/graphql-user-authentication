@@ -11,6 +11,8 @@ import UserResolver from "./resolvers/user"
 
 const main =async () => {
 
+    // Initialize type orm db connection
+    // @ts-ignore orm is declared but never used -.-
     const orm = await createConnection({
         type:"postgres",
         database: "usersignuptest1",
@@ -20,15 +22,14 @@ const main =async () => {
         synchronize: true,
         entities: [User]
     })
-    console.log("DB Connection:", orm.name)
 
     const app = express()
 
+    // Initialize redis connection for storing sessions
     const RedisStore = connectRedis(session)
     const redisClient = createClient()
     
-    // Applying express middleware in a specific order.
-    // Session will run before everything else.
+    // Applying express middleware in a specific order. Session will run before everything else.
     app.use(
         session({
             name:"qid",
@@ -45,6 +46,7 @@ const main =async () => {
         })
     )
 
+    // Apollo Server graphql middleware setup
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
             resolvers: [UserResolver],
@@ -52,10 +54,9 @@ const main =async () => {
         }),
         context: ({req, res}) : MyGraphQLContext => ({req, res})
     })
-    
-    
     apolloServer.applyMiddleware({ app })
     
+    // Express app setup
     app.get("/", (_, res) => { res.send("Hello world! I'm alive!") })
     app.listen(5000., () => console.log("Express server started @ localhost:5000."))
 }
