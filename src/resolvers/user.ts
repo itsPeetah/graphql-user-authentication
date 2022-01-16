@@ -54,7 +54,8 @@ export default class UserResolver{
 
     @Mutation(() => UserResponse)
     async register(
-        @Arg("args") args : UsernamePasswordInput
+        @Arg("args") args : UsernamePasswordInput,
+        @Ctx() {req} : MyGraphQLContext
     ) : Promise<UserResponse> {
         
         // Check username and password length
@@ -70,13 +71,18 @@ export default class UserResolver{
         // Try creating a new user, fail if username is already taken
         try{
             const theUser = await User.create({username: args.username, password: hashedPassword}).save()
+            
+            // AUTO-LOGIN
+            req.session.userId = theUser._id
+
             return { user: theUser };
+
         } catch (err){
             // Error code for trying to create a user with an already existing username
             // username column is set as unique
             if(err.code == "23505") return {errors:[{field: "Username", message:"Username already taken."}]}
             else return{errors:[{field:"Unknown", message:"Something went wrong..."}]}
-        }        
+        }
     }
 
     @Mutation(() => UserResponse)
