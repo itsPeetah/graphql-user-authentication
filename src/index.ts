@@ -4,9 +4,9 @@ import {graphqlHTTP} from "express-graphql"
 import {buildSchema} from "type-graphql"
 import User from "./schema/entities/User"
 import UserResolver from "./schema/resolvers/user"
-import redis from "redis"
-import session from "express-session"
-import connectRedis from "connect-redis"
+// import redis from "redis"
+// import session from "express-session"
+// import connectRedis from "connect-redis"
 
 const main =async () => {
 
