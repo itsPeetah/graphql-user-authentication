@@ -52,7 +52,7 @@ export default class UserResolver{
 
 
     @Mutation(() => UserResponse)
-    async createUser(
+    async register(
         @Arg("args") args : UsernamePasswordInput
     ) : Promise<UserResponse> {
         
@@ -79,7 +79,7 @@ export default class UserResolver{
     }
 
     @Mutation(() => UserResponse)
-    async userLogin(
+    async login(
         @Arg("args") args : UsernamePasswordInput
     ) : Promise<UserResponse>{
         // Check if the username exists
