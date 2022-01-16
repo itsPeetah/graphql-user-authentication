@@ -47,6 +47,7 @@ const main =async () => {
     )
 
     // Apollo Server graphql middleware setup
+    // Set "request.credentials" to "include" in apollo playground settings
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
             resolvers: [UserResolver],
