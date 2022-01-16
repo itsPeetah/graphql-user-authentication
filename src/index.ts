@@ -6,8 +6,8 @@ import { createClient } from "redis"
 import session from "express-session"
 import connectRedis from "connect-redis"
 import { MyGraphQLContext } from "./types"
-import User from "./schema/entities/User"
-import UserResolver from "./schema/resolvers/user"
+import User from "./entities/User"
+import UserResolver from "./resolvers/user"
 
 const main =async () => {
 
