@@ -67,6 +67,8 @@ export type UsernamePasswordInput = {
   username: Scalars['String'];
 };
 
+export type SlimUserFragment = { __typename?: 'User', username: string };
+
 export type LoginMutationVariables = Exact<{
   args: UsernamePasswordInput;
 }>;
@@ -79,14 +81,18 @@ export type RegisterMutationVariables = Exact<{
 }>;
 
 
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', user?: { __typename?: 'User', _id: number, username: string } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', user?: { __typename?: 'User', username: string } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', username: string, _id: number } | null | undefined };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', username: string } | null | undefined };
 
-
+export const SlimUserFragmentDoc = gql`
+    fragment SlimUser on User {
+  username
+}
+    `;
 export const LoginDocument = gql`
     mutation Login($args: UsernamePasswordInput!) {
   login(args: $args) {
@@ -109,8 +115,7 @@ export const RegisterDocument = gql`
     mutation Register($args: UsernamePasswordInput!) {
   register(args: $args) {
     user {
-      _id
-      username
+      ...SlimUser
     }
     errors {
       field
@@ -118,7 +123,7 @@ export const RegisterDocument = gql`
     }
   }
 }
-    `;
+    ${SlimUserFragmentDoc}`;
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
@@ -126,11 +131,10 @@ export function useRegisterMutation() {
 export const MeDocument = gql`
     query Me {
   me {
-    username
-    _id
+    ...SlimUser
   }
 }
-    `;
+    ${SlimUserFragmentDoc}`;
 
 export function useMeQuery(options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });

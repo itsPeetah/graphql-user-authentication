@@ -1,8 +1,7 @@
 mutation Register ($args:UsernamePasswordInput!){
     register(args:$args){
         user {
-            _id
-            username
+            ...SlimUser
         }
         errors {
             field
