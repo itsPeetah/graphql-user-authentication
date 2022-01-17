@@ -40,7 +40,7 @@ export default class UserResolver{
     ) : Promise<UserResponse>{
         const theUser = await User.findOne({where:{username}})
         if(!theUser){
-            return {errors:[{field: "Username", message: "Username does not exist"}]}
+            return {errors:[{field: "username", message: "Username does not exist"}]}
         }
         else return {user:theUser}
     }
@@ -60,9 +60,9 @@ export default class UserResolver{
         
         // Check username and password length
         if (args.username.length < 3){
-            return {errors: [{field: "Username", message: "Username must be at least 3 characters long."}]}
+            return {errors: [{field: "username", message: "Username must be at least 3 characters long."}]}
         } else if (args.password.length < 3){
-            return {errors: [{field: "Password", message: "Password must be at least 3 characters long."}]}
+            return {errors: [{field: "password", message: "Password must be at least 3 characters long."}]}
         }
 
         // Only stored hashed password
@@ -80,8 +80,8 @@ export default class UserResolver{
         } catch (err){
             // Error code for trying to create a user with an already existing username
             // username column is set as unique
-            if(err.code == "23505") return {errors:[{field: "Username", message:"Username already taken."}]}
-            else return{errors:[{field:"Unknown", message:"Something went wrong..."}]}
+            if(err.code == "23505") return {errors:[{field: "username", message:"Username already taken."}]}
+            else return{errors:[{field:"unknown", message:"Something went wrong..."}]}
         }
     }
 
@@ -92,11 +92,11 @@ export default class UserResolver{
     ) : Promise<UserResponse>{
         // Check if the username exists
         const theUser = await User.findOne({where:{username:args.username}})
-        if(!theUser) return {errors:[{field:"Username", message:"Username not found."}]}
+        if(!theUser) return {errors:[{field:"username", message:"Username not found."}]}
         
         // Validate password
         const passwordIsValid = await argon2.verify(theUser.password, args.password)
-        if(!passwordIsValid) return {errors:[{field:"Password", message:"password is not valid."}]}
+        if(!passwordIsValid) return {errors:[{field:"password", message:"password is not valid."}]}
 
         req.session.userId = theUser._id
 
