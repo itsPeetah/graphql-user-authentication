@@ -39,7 +39,7 @@ const NavBar : React.FC<NavBarProps> = ({}) => {
     }
 
     return(
-        <Flex bg="tomato" p={4} color="white" fontWeight={800}>
+        <Flex bg="turquoise" p={4} color="white" fontWeight={800}>
             website name
             <Box ml="auto">
                 {body}
