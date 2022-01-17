@@ -8,6 +8,7 @@ import connectRedis from "connect-redis"
 import { MyGraphQLContext } from "./types"
 import User from "./entities/User"
 import UserResolver from "./resolvers/user"
+import cors from "cors"
 
 const main =async () => {
 
@@ -24,6 +25,14 @@ const main =async () => {
     })
 
     const app = express()
+
+    app.use(
+        /* '/', // I can apply the middleware to a specific route, but in this case I'll apply it to every single one. */
+        cors({
+            origin:"http://localhost:3000",
+            credentials:true
+        })
+    )
 
     // Initialize redis connection for storing sessions
     const RedisStore = connectRedis(session)
@@ -55,7 +64,10 @@ const main =async () => {
         }),
         context: ({req, res}) : MyGraphQLContext => ({req, res})
     })
-    apolloServer.applyMiddleware({ app })
+    apolloServer.applyMiddleware({
+        app,
+        cors: false
+    })
     
     // Express app setup
     app.get("/", (_, res) => { res.send("Hello world! I'm alive!") })
