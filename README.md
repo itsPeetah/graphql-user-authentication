@@ -2,7 +2,7 @@
 
 ## Packages
 
-| Package          | Scope               |
-| -:               | :-                  |
-| [server](server) | backend server      |
-| [web](web)       | frontend web server |
+| Package          | Scope        |
+| -:               | :-           |
+| [server](server) | backend      |
+| [web](web)       | web frontend |
