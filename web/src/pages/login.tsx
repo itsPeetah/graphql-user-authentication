@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import InputField from "../components/InputField";
 import { Wrapper } from "../components/Wrapper";
-import { useLoginMutation, useRegisterMutation } from "../generated/graphql";
+import { useLoginMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
 
 const Login : React.FC<{}> = ({}) => {
