@@ -3,37 +3,27 @@ import { Form, Formik } from "formik"
 import { Box, Button } from "@chakra-ui/react"
 import InputField from "./InputField"
 import { useMutation } from "urql"
-
-const REGISTER_MUTATION = `
-mutation Register ($username:String!, $password:String!){
-    register(args :{username:$username, password:$password}){
-        user {
-            _id
-            username
-        }
-        errors {
-            field
-            message
-        }
-    }
-}
-`
-
+import { useRegisterMutation } from "../generated/graphql"
+import { toErrorMap } from "../utils/toErrorMap"
 
 export default function RegisterForm() {
 
-    const [{}, register] = useMutation(REGISTER_MUTATION)
-    
-    const onSubmit = async(values:object) =>  {
-        console.log(values)
-        const response = await register(values) // The "values" keys map perfectly to the GraphQL mutation's parameters so we don't need to specify them
-        return response
-    }
+    const [{}, register] = useRegisterMutation();
 
     return (
         <Formik
             initialValues={{username: "", password:""}}
-            onSubmit={onSubmit}
+            onSubmit={async(values, {setErrors}) =>  {
+                console.log(values)
+                const response = await register(values) // The "values" keys map perfectly to the GraphQL mutation's parameters so we don't need to specify them
+                console.log(response.data)
+                
+                if(response.data?.register.errors){
+                    setErrors(toErrorMap(response.data.register.errors))
+                }
+                
+                return response
+            }}
         >
             {({isSubmitting}) => (
                 <Form>
