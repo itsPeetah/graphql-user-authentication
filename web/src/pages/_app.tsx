@@ -10,7 +10,7 @@ const client = createClient({
   }
 })
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps } : any) {
   return (
     <URLQProvider value={client}>
       <ChakraProvider resetCSS theme={theme}>
