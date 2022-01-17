@@ -103,6 +103,20 @@ export default class UserResolver{
         return {user:theUser}
     }
 
+    @Mutation(()=>Boolean)
+    logout( @Ctx() {req, res} : MyGraphQLContext ){
+        // destroy session
+        return new Promise(resolve => req.session.destroy(err => {
+            res.clearCookie("qid"); // clear cookie on client
+            if(err){
+                console.log("Error destroying the session:", err)
+                resolve(false);
+                return;
+            }
+            resolve(true);
+        }))
+    }
+
     @Query(() => User, {nullable:true})
     async me( @Ctx() {req} : MyGraphQLContext ) : Promise<User|null|undefined> {
 
