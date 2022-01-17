@@ -1,5 +1,5 @@
 mutation Register ($args:UsernamePasswordInput!){
-    register(args : $args){
+    register(args:$args){
         user {
             _id
             username
