@@ -5,9 +5,11 @@ import InputField from "./InputField"
 import { useMutation } from "urql"
 import { useRegisterMutation } from "../generated/graphql"
 import { toErrorMap } from "../utils/toErrorMap"
+import { useRouter } from "next/router"
 
 export default function RegisterForm() {
-
+    
+    const router = useRouter() 
     const [{}, register] = useRegisterMutation();
 
     return (
@@ -20,6 +22,9 @@ export default function RegisterForm() {
                 
                 if(response.data?.register.errors){
                     setErrors(toErrorMap(response.data.register.errors))
+                } else if (response.data?.register.user){
+                    // it worked
+                    router.push('/')
                 }
                 
                 return response
