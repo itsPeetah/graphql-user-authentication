@@ -19,6 +19,7 @@ const client = createClient({
       // Custom data updates
       updates: {
         Mutation:{
+          // @ts-ignore unused args
           login: (_result, args, cache, info ) => {
             betterUpdateQuery<LoginMutation, MeQuery>(
               cache,
@@ -29,6 +30,7 @@ const client = createClient({
                 else return {me:result.login.user}
               });
           },
+          // @ts-ignore unused args
           register: (_result, args, cache, info ) => {
             betterUpdateQuery<RegisterMutation, MeQuery>(
               cache,
