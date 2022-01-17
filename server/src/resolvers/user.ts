@@ -80,7 +80,7 @@ export default class UserResolver{
         } catch (err){
             // Error code for trying to create a user with an already existing username
             // username column is set as unique
-            if(err.code == "23505") return {errors:[{field: "username", message:"Username already taken."}]}
+            if(err.detail.includes("already exists")) return {errors:[{field: "username", message:"Username already taken."}]}
             else return{errors:[{field:"unknown", message:"Something went wrong..."}]}
         }
     }
